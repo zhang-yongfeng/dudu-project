@@ -3,6 +3,7 @@ package com.qianfeng.project.weixin.service;
 import com.qianfeng.project.weixin.api.accessToken.AccessTokenRedis;
 import com.qianfeng.project.weixin.api.hitokoto.HitokotoUtil;
 import com.qianfeng.project.weixin.api.tuling.TulingUtil;
+import com.qianfeng.project.weixin.api.userinfo.UserInfoService;
 import com.qianfeng.project.weixin.bean.resp.Article;
 import com.qianfeng.project.weixin.bean.resp.NewsMessage;
 import com.qianfeng.project.weixin.bean.resp.TextMessage;
@@ -24,6 +25,8 @@ public class CoreService {
 	private HitokotoUtil hitokotoUtil; //一言API
 	@Autowired
 	private AccessTokenRedis accessTokenRedis; //Redis accessToken对象
+	@Autowired
+	private UserInfoService userInfoService;//收集微信用户个人信息
 	/**
 	 * 处理微信发来的请求
 	 * 
@@ -107,7 +110,9 @@ public class CoreService {
 				String eventType = requestMap.get("Event");
 				// 订阅
 				if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)) {
-					
+					//收集用户个人信息
+					userInfoService.userInfo(fromUserName);
+
 					respContent = "欢迎关注微信公众号";
 				}
 				// 取消订阅

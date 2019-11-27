@@ -19,7 +19,7 @@ public class MenuManager {
 
  */
 	
-	public final static String REAL_URL="http://wg6k9a.natappfree.cc/"; //个人花生壳
+	public final static String REAL_URL="http://wefc5j.natappfree.cc/"; //个人花生壳
 	//public final static String REAL_URL = "http://wxmobsa.yidatec.com/weixin/"; //正式号服务器	
 	
 	public final static String appId="wxb81397fdbdca46ec";
@@ -111,7 +111,7 @@ public class MenuManager {
 		ViewButton btn33 = new ViewButton();
 		btn33.setName("个人中心");
 		btn33.setType("view");
-		btn33.setUrl("https://www.sina.com.cn/");
+		btn33.setUrl(MenuManager.REAL_URL+"oauth/weixin/user");
 
 		CommonButton btn34 = new CommonButton(); //返回图文消息
 		btn34.setName("随机一言");

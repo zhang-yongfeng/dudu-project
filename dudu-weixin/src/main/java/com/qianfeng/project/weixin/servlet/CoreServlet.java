@@ -14,14 +14,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @Controller
-@RequestMapping("myweixin")
+@RequestMapping("weixin")
 public class CoreServlet {
 	private static final long serialVersionUID = 4440739483644821986L;
 
 	/**
 	 * 确认请求来自微信服务器
 	 */
-	@RequestMapping(value="weixin",method=RequestMethod.GET)  // weixin/weixinOpe
+	@RequestMapping(value= "weixin",method=RequestMethod.GET)  // weixin/weixinOpe
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 微信加密签名
 		String signature = request.getParameter("signature");
@@ -50,7 +50,7 @@ public class CoreServlet {
 	 */
 	@Autowired
 	CoreService coreService;
-	@RequestMapping(value="weixin",method=RequestMethod.POST)
+	@RequestMapping(value= "weixin",method=RequestMethod.POST)
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 将请求、响应的编码均设置为UTF-8（防止中文乱码）
 		//微信服务器POST消息时用的是UTF-8编码，在接收时也要用同样的编码，否则中文会乱码；
