@@ -95,6 +95,7 @@ public class WeixinOauth {
                 return "weixin/login";
             } else {
                 //已绑定   跳到目标页面
+                request.setAttribute("user",user);
                 return "weixin/user/userInfo";
             }
         }

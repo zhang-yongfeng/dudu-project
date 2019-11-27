@@ -32,4 +32,9 @@ public class UserServiceImpl implements UserService {
     public int updateByEmail(Integer wid, String email) {
         return userMapper.updateByEmail(wid,email);
     }
+
+    @Override
+    public int updateByPrimaryKeySelective(User record) {
+        return userMapper.updateByPrimaryKeySelective(record);
+    }
 }

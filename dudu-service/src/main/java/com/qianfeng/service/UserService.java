@@ -27,4 +27,6 @@ public interface UserService {
     User selectByEmail(String email);
 
     int updateByEmail(Integer wid,String email);
+
+    int updateByPrimaryKeySelective(User record);
 }

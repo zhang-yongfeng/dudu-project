@@ -5,7 +5,9 @@ import com.qianfeng.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @Description:
@@ -23,6 +25,7 @@ public class UserController {
      * 登陆(绑定)功能
      */
     @RequestMapping("login")
+    @ResponseBody
     public String login(@RequestParam("email") final String email,
                         @RequestParam("wid") final Integer wid){
         //1.用户输入的邮箱在数据库user表中是否存在
@@ -38,5 +41,17 @@ public class UserController {
         }else {
             return "3";//该用户的邮箱不存在,无法进行登陆功能
         }
+    }
+
+    /**
+     * 更新用户信息
+     */
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST,value = "updateUser")
+    public String updateUserInfo(User user){
+        int num = userService.updateByPrimaryKeySelective(user);
+
+        return num+"";
     }
 }
