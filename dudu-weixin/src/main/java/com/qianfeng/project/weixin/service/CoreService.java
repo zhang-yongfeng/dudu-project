@@ -83,7 +83,7 @@ public class CoreService {
 			if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_TEXT)) {
 
 				//System.out.println("accessToken的值是："+ AccessTokenThread.access_token_val);
-				//System.out.println("accessToken的值是:"+accessTokenRedis.getAccessTokenVal());
+				System.out.println("accessToken的值是:"+accessTokenRedis.getAccessTokenVal());
 				respContent=tulingUtil.invoke(content);
 
 			//	respContent = "您发送的是文本消息！";

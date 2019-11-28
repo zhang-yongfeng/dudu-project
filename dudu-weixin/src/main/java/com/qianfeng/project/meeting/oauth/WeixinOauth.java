@@ -10,6 +10,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -109,6 +110,78 @@ public class WeixinOauth {
 //
 //        JSONObject userInfoJson = WeixinUtil.httpRequest(userInfoUrl,"GET",null);
 //        request.setAttribute("userInfoJson",userInfoJson);
+
+        return "oauth";
+    }
+
+    /**
+     * 微信    会议  -->  会议发布
+     */
+    @RequestMapping("weixin/meetingPub")       //  http://wg6k9a.natappfree.cc/oauth/weixin/user
+    public void oauthMeetingPub(HttpServletResponse response) throws IOException {
+        //授权后重定向的回调链接地址， 请使用 urlEncode 对链接进行处理
+        String redirect_url= MenuManager.REAL_URL+"oauth/weixin/meetingPub/invoke";
+        try {
+            redirect_url = URLEncoder.encode(redirect_url,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        //1.用户同意授权
+        String url = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
+                "appid=" + MenuManager.appId +
+                "&redirect_uri=" +redirect_url+
+                "&response_type=code" +
+                "&scope=snsapi_base" +
+                "&state=qinger" +
+                "#wechat_redirect";
+
+        response.sendRedirect(url);
+    }
+
+    @RequestMapping("weixin/meetingPub/invoke")   //  oauth/weixin/user/invoke
+    public String meetingPubinvoke(HttpServletRequest request) {
+        //2.得到code
+        String code = request.getParameter("code");
+        //获取 access_token
+        String url = "https://api.weixin.qq.com/sns/oauth2/access_token?" +
+                "appid=" + MenuManager.appId +
+                "&secret=" + MenuManager.appSecret +
+                "&code=" + code +
+                "&grant_type=authorization_code";
+
+        //发送请求
+        JSONObject jsonObject = WeixinUtil.httpRequest(url, "GET", null);
+        //得到openid
+        String openid = jsonObject.getString("openid");
+        /**
+         * 1.根据openid查询weiuser表   得到主键id
+         * 2.根据wid去查询user表
+         */
+        Weiuser weiuser = weiuserService.selectByOpenid(openid);
+        if (weiuser == null) {
+            //微信个人信息不存在 -->重新关注收集信息
+            //1.提示操作异常,请重新关注
+            //2.收集用户信息,存入数据库
+            System.out.println("该用户信息不存在");
+        }else {
+            User user = userService.selectByWid(weiuser.getId());
+            if (user == null) {
+                request.setAttribute("wid",weiuser.getId());
+                //未绑定   跳到登录页面
+                return "weixin/login";
+            } else {
+                //已绑定   判断角色是发单还是抢单组
+               if (1==user.getRid()){
+                   request.setAttribute("uid",user.getId());
+                   //发单组-->发单页面
+                    return "weixin/meetingPub/meetingPub";
+               }else if (2==user.getRid()){
+                   //抢单组-->无权限页面
+                   return "weixin/unauth";
+               }
+            }
+        }
 
         return "oauth";
     }

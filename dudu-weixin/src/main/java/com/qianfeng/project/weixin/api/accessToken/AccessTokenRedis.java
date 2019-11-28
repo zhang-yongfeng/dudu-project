@@ -22,8 +22,10 @@ import java.util.concurrent.TimeUnit;
 public class AccessTokenRedis {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
     @Resource(name="redisTemplate")
     private ValueOperations<String, String> string;
+
     private static final String REDIS_KEY_ACCESS_TOKEN="access_token";
     /**
      * key如果存在，到Redis中进行查询

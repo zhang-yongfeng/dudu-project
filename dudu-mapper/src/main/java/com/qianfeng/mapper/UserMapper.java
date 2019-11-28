@@ -34,4 +34,10 @@ public interface UserMapper {
      */
     @Update("update user set wid=#{wid} where email=#{email}")
     int updateByEmail(Integer wid,String email);
+
+    /**
+     * 根据weiuser表中openid查询得到user对象
+     */
+    @Select("SELECT * FROM `user` WHERE wid=(SELECT id FROM weiuser WHERE openid=#{openid});")
+    User selectByOpenid(String openid);
 }

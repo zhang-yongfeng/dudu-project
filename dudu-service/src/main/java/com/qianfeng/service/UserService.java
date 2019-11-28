@@ -15,18 +15,19 @@ public interface UserService {
     /**
      * 后台端   增删改查常用方法
      */
-
+    int updateByPrimaryKeySelective(User record);
    // ######TODO 微信端
     /**
      * 微信端
      * @param wid
      * @return
      */
+    //wid查询user对象
     User selectByWid(Integer wid);
-
+    //根据邮箱查询user对象信息
     User selectByEmail(String email);
-
+    //进行登陆绑定功能
     int updateByEmail(Integer wid,String email);
-
-    int updateByPrimaryKeySelective(User record);
+    //会议发单的角色判断
+    User selectByOpenid(String openid);
 }
