@@ -4,6 +4,7 @@ import com.qianfeng.po.MeetingPub;
 import com.qianfeng.service.MeetingPubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -44,5 +45,16 @@ public class MeetingPubController {
     public List<MeetingPub> selectMyMeetingPub(@RequestParam("uid") String uid){
 
         return meetingPubService.selectMeetingPubByUid(uid);
+    }
+
+    /**
+     * 会议抢单功能
+     * 可抢单列表
+     */
+    @ResponseBody
+    @RequestMapping("grabList")
+    public List<MeetingPub> selectGrabList(@RequestParam("uid") String uid,
+                                           @RequestParam("tname") String tname){
+        return meetingPubService.selectGrabList(uid, tname);
     }
 }

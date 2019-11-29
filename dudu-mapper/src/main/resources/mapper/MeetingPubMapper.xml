@@ -149,4 +149,17 @@
       status = #{status,jdbcType=SMALLINT}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+<!--  我的抢单者列表-->
+  <select id="selectGrabList" resultType="com.qianfeng.po.MeetingPub">
+    select pub.* from meetingpub pub
+    LEFT join user u on (pub.pzone='全国' or u.zone=pub.pzone)
+    where u.id=#{param1}
+    and pub.id not in (select pid from meetinggrab where grabStatus=1 or uid=#{param1})
+    <if test="param2!='-1'.toString()">
+      and pub.tname=#{param2}
+    </if>
+    order by pub.pcode desc
+
+  </select>
 </mapper>

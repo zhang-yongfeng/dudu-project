@@ -41,6 +41,11 @@ public class MeetingPubServiceImpl implements MeetingPubService {
         return meetingPubMapper.selectMeetingPubByUid(uid);
     }
 
+    @Override
+    public List<MeetingPub> selectGrabList(String uid, String tname) {
+        return meetingPubMapper.selectGrabList(uid,tname);
+    }
+
     /**
      * 会议编号生成规则
      * 根据会议召开日期进行生成

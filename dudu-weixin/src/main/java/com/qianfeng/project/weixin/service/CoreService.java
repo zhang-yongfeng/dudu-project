@@ -1,5 +1,7 @@
 package com.qianfeng.project.weixin.service;
 
+import com.qianfeng.po.User;
+import com.qianfeng.po.Weiuser;
 import com.qianfeng.project.weixin.api.accessToken.AccessTokenRedis;
 import com.qianfeng.project.weixin.api.hitokoto.HitokotoUtil;
 import com.qianfeng.project.weixin.api.tuling.TulingUtil;
@@ -7,7 +9,10 @@ import com.qianfeng.project.weixin.api.userinfo.UserInfoService;
 import com.qianfeng.project.weixin.bean.resp.Article;
 import com.qianfeng.project.weixin.bean.resp.NewsMessage;
 import com.qianfeng.project.weixin.bean.resp.TextMessage;
+import com.qianfeng.project.weixin.main.MenuManager;
 import com.qianfeng.project.weixin.util.MessageUtil;
+import com.qianfeng.service.UserService;
+import com.qianfeng.service.WeiuserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +32,10 @@ public class CoreService {
 	private AccessTokenRedis accessTokenRedis; //Redis accessToken对象
 	@Autowired
 	private UserInfoService userInfoService;//收集微信用户个人信息
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private WeiuserService weiuserService;
 	/**
 	 * 处理微信发来的请求
 	 * 
@@ -125,7 +134,47 @@ public class CoreService {
 					String eventKey = requestMap.get("EventKey");
 
 					if (eventKey.equals("11")) {
-						respContent = "会议抢单项被点击！";
+						//respContent = "会议抢单项被点击！";
+						List<Article> articleList = new ArrayList<Article>();
+						// 单图文消息
+						Article article = new Article();
+
+						//通过openid(fromUserName)判断当前用户是否进行绑定
+						User user = userService.selectByOpenid(fromUserName);
+						if (user==null){	//如果没有进行登陆-->跳登录界面
+							Weiuser weiuser = weiuserService.selectByOpenid(fromUserName);
+
+							article.setTitle("未知用户");
+							article.setDescription("您还未登录,请点此登录验证");
+							article.setPicUrl(
+									"https://pic30.nipic.com/20130613/9364377_084634980000_2.jpg");
+							article.setUrl(MenuManager.REAL_URL+"user/to/login?wid="+weiuser.getId());
+						}else {		//已经绑定登录页面-->判断角色是发单组还是抢单组
+							if (user.getRid()==1){	//发单组    无权限
+								article.setTitle("您是发单组,无法使用此功能");
+								article.setDescription("该功能需要拥有抢单组权限才可以访问!");
+								article.setPicUrl(
+										"http://pic31.nipic.com/20130722/10602324_194117570185_2.png");
+								article.setUrl(MenuManager.REAL_URL+"user/to/unauth");
+
+							}else {		//抢单组    进入抢单页面
+								article.setTitle("欢迎使用抢单功能");
+								article.setDescription("什么是抢单-->抢单实用教程!");
+								article.setPicUrl(
+										"http://pic1.nipic.com/2009-03-04/200934172396_2.jpg");
+								article.setUrl(MenuManager.REAL_URL+"user/to/meetingGrab?uid="+user.getId());
+
+							}
+
+						}
+						articleList.add(article);
+						// 设置图文消息个数
+						newsMessage.setArticleCount(articleList.size());
+						// 设置图文消息
+						newsMessage.setArticles(articleList);
+						// 将图文消息对象转换为XML字符串
+						respMessage = MessageUtil.newsMessageToXml(newsMessage);
+						return respMessage;
 
 					}else if(eventKey.equals("31")){
 						respContent = "联系我们项被点击！";

@@ -18,8 +18,8 @@ public class MenuManager {
 	3、根据access_token，将json格式的菜单数据通过https post方式提交。
 
  */
-	
-	public final static String REAL_URL="http://4935ff.natappfree.cc/"; //个人花生壳
+
+	public final static String REAL_URL="http://6gguay.natappfree.cc/"; //个人花生壳
 	//public final static String REAL_URL = "http://wxmobsa.yidatec.com/weixin/"; //正式号服务器	
 	
 	public final static String appId="wxb81397fdbdca46ec";
@@ -34,10 +34,11 @@ public class MenuManager {
 			int result = WeixinUtil.createMenu(getMenu(), at.getToken());
 
 			// 判断菜单创建结果
-			if (0 == result)
+			if (0 == result) {
 				log.info("菜单创建成功！");
-			else
+			} else {
 				log.info("菜单创建失败，错误码：" + result);
+			}
 		}
 	}
 	
@@ -54,10 +55,11 @@ public class MenuManager {
 			int result = WeixinUtil.createMenu(getMenu(),at.getToken());
 
 			// 判断菜单创建结果
-			if (0 == result)
+			if (0 == result) {
 				log.info("菜单创建成功！");
-			else
+			} else {
 				log.info("菜单创建失败，错误码：" + result);
+			}
 		}
 	}
 

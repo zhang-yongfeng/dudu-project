@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @Description:
  * @Company: qianfeng
@@ -53,5 +55,34 @@ public class UserController {
         int num = userService.updateByPrimaryKeySelective(user);
 
         return num+"";
+    }
+
+    /**
+     * 页面跳转   Controller操作
+     * 登录页面
+     */
+    @RequestMapping("to/login")
+    public String login(HttpServletRequest request){
+        String wid = request.getParameter("wid");
+        request.setAttribute("wid",wid);
+        return "weixin/login";
+    }
+
+    /**
+     * 无权页面
+     */
+    @RequestMapping("to/unauth")
+    public String unauth(){
+        return "weixin/unauth";
+    }
+
+    /**
+     * 进入抢单页面
+     */
+    @RequestMapping("to/meetingGrab")
+    public String meetingGrab(HttpServletRequest request){
+        String uid = request.getParameter("uid");
+        request.setAttribute("uid",uid);
+        return "weixin/meetingGrab/meetingGrab";
     }
 }
