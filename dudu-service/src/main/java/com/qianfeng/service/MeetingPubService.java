@@ -33,4 +33,12 @@ public interface MeetingPubService {
      * tname=java/ui/数据库
      */
     List<MeetingPub> selectGrabList(String uid,String tname);
+
+    /**
+     * 我的抢单列表
+     * 会议-->会议抢单-->我的抢单
+     * @param uid 抢单人的UID
+     * @return
+     */
+    List<MeetingPub> selectMyGrabListByUid(String uid);
 }

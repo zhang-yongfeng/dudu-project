@@ -162,4 +162,26 @@
     order by pub.pcode desc
 
   </select>
+
+  <select id="selectMyGrabListByUid" resultMap="selectMyGrabListByUidResultMap">
+    select pub.*,
+    grab.id,grab.pid,grab.remark as remark1,grab.uid as uid1,grab.grabStatus
+    from meetingpub pub
+    left join meetinggrab grab on pub.id=grab.pid
+    where grab.uid=#{uid}
+    order by pub.pcode desc
+  </select>
+
+  <resultMap id="selectMyGrabListByUidResultMap" type="com.qianfeng.po.MeetingPub" extends="BaseResultMap">
+<!--    meetingGrab抢单表的映射-->
+    <association property="meetingGrab">
+      <id column="id" property="id" jdbcType="VARCHAR" />
+      <result column="pid" property="pid" jdbcType="VARCHAR" />
+      <result column="remark1" property="remark" jdbcType="VARCHAR" />
+      <result column="uid1" property="uid" jdbcType="VARCHAR" />
+      <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+      <result column="grabStatus" property="grabstatus" jdbcType="INTEGER" />
+      <result column="grabDate" property="grabdate" jdbcType="TIMESTAMP" />
+    </association>
+  </resultMap>
 </mapper>

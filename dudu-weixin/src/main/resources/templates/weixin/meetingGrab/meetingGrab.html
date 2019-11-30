@@ -40,6 +40,7 @@
                     var appendHtml = "";
                     $("#grabNum").append(msg.length);
                     for(var i=0;i<msg.length;i++){
+                        var pid=msg[i].id;
                         mname=msg[i].ptitle;
                         remark=msg[i].pcode;
                         dateCurr=msg[i].remark;
@@ -50,11 +51,20 @@
                             "<div style='white-space: nowrap;overflow: hidden;text-overflow:ellipsis;display: block;color: #777777;font-size:16px;padding-top:1px'>" +
                             remark + " / " + dateCurr + "</div></div>" +
                             "<div style='width: 30%;float: right;'>" +
-                            "<button class='able-btn' >可抢单</button></div></div>";
+                            "<button class='able-btn' onclick='meetingGrabAdd(\""+pid+"\")' >可抢单</button></div></div>";
                     }
                     $("#grabDiv").append(appendHtml);
                 }
             });
+        }
+        /**
+         进入可抢单 添加页面
+         * */
+        function meetingGrabAdd(pid){
+            $("#pid").val(pid);
+            // window.location.href="[[@{/meetingGrab/addPage}]]"; // meetingGrab/addPage
+            //form表单
+            document.formMeetingGrabAdd.submit();
         }
         /**
          * 加载时 ajax 将课题类别数据加载
@@ -90,61 +100,83 @@
             var mname="学习SpringBoot";
             var remark="备注";
             var dateCurr="时间";
-            var appendHtml = "<font style='padding: 10px 10px 10px 15px;display: block;color: #777777;'>您共抢到了n单</font>";
-            appendHtml += "<div style='width: 100%;background-color: white;margin-top: -3px;padding:10px 10px 10px 15px;display: inline-block;'>" +
-                "<div style='width: 70%;float: left;' onclick='showMeetingInfo(\"" + 1 + "\");'>" +
-                "<div style='white-space: nowrap;overflow: hidden;text-overflow:ellipsis;display: block;font-size:18px;'>" +
-                mname + "</div>" +
-                "<div style='white-space: nowrap;overflow: hidden;text-overflow:ellipsis;display: block;color: #777777;font-size:16px;padding-top:1px'>" +
-                remark + " / " + dateCurr + "</div></div>" +
-                "<div style='width: 30%;float: right;'>" +
-                "<button class='able-btn' >选择讲者</button></div></div>";
-            appendHtml += "<div style='width: 100%;background-color: white;margin-top: -3px;padding:10px 10px 10px 15px;display: inline-block;'>" +
-                "<div style='width: 70%;float: left;' onclick='showMeetingInfo(\"" + 1 + "\");'>" +
-                "<div style='white-space: nowrap;overflow: hidden;text-overflow:ellipsis;display: block;font-size:18px;'>" +
-                mname + "</div>" +
-                "<div style='white-space: nowrap;overflow: hidden;text-overflow:ellipsis;display: block;color: #777777;font-size:16px;padding-top:1px'>" +
-                remark + " / " + dateCurr + "</div></div>" +
-                "<div style='width: 30%;float: right;'>" +
-                "<button class='able-btn' >选择讲者</button></div></div>";
-            $("#two").append(appendHtml);
+
+            var uid=$("#uid").val();
+            $.ajax({
+                type:"post",
+                url:"[[@{/meetingGrab/uid}]]",  // meetingGrab/uid
+                data:{"uid":uid},
+                success:function(msg){
+
+                    var appendHtml = "<font style='padding: 10px 10px 10px 15px;display: block;color: #777777;'>您共发布了"+msg.length+"场会议</font>";
+
+                    for(var i=0;i<msg.length;i++){
+                        mname=msg[i].ptitle;
+                        remark=msg[i].pcode;
+                        dateCurr=msg[i].tname;
+                        var  grabStatus=msg[i].meetingGrab.grabstatus;
+                        appendHtml += "<div style='width: 100%;background-color: white;margin-top: -3px;padding:10px 10px 10px 15px;display: inline-block;'>" +
+                            "<div style='width: 70%;float: left;' onclick='showMeetingInfo(\"" + 1 + "\");'>" +
+                            "<div style='white-space: nowrap;overflow: hidden;text-overflow:ellipsis;display: block;font-size:18px;'>" +
+                            mname + "</div>" +
+                            "<div style='white-space: nowrap;overflow: hidden;text-overflow:ellipsis;display: block;color: #777777;font-size:16px;padding-top:1px'>" +
+                            remark + " / " + dateCurr + "</div></div>" +
+                            "<div style='width: 30%;float: right;'>" ;
+                        if(grabStatus==0){
+                            appendHtml+="未审批";
+                        }else if(grabStatus==1) {
+                            appendHtml+="<button class='able-btn' >抢单成功</button>";
+                        }else{
+                            appendHtml+="抢单失败";
+                        }
+                        appendHtml+="</div></div>";
+                    }
+                    $("#two").append(appendHtml);
+                }
+            });
         }
     </script>
 </head>
 
 <body>
-<div data-role="page" id="pageDetail">
-    <div style="padding:0px;background-color: #4E90C7;width: 100%;height:40px;line-height:40px;font-size:18px;text-align: center;cursor: pointer;" data-role="none">
-        <div style="width: 50%;float: left;color: white;" onclick="showPubDiv();" id="one_tab">
-            抢单
-            <div style="border-right: 1px solid white;float: right;margin-top: 10px;height: 20px;"></div>
+    <div data-role="page" id="pageDetail">
+        <div style="padding:0px;background-color: #4E90C7;width: 100%;height:40px;line-height:40px;font-size:18px;text-align: center;cursor: pointer;" data-role="none">
+            <div style="width: 50%;float: left;color: white;" onclick="showPubDiv();" id="one_tab">
+                抢单
+                <div style="border-right: 1px solid white;float: right;margin-top: 10px;height: 20px;"></div>
+            </div>
+            <div style="width: 50%;float: left;color: white;" onclick="showMyMeetings();" id="two_tab">我的抢单</div>
+            <div style="border-top:5px solid white;width: 50%;float: left;" id="one_line"></div>
+            <div style="border-top:5px solid #4E90C7;width: 50%;float: left;" id="two_line"></div>
         </div>
-        <div style="width: 50%;float: left;color: white;" onclick="showMyMeetings();" id="two_tab">我的抢单</div>
-        <div style="border-top:5px solid white;width: 50%;float: left;" id="one_line"></div>
-        <div style="border-top:5px solid #4E90C7;width: 50%;float: left;" id="two_line"></div>
-    </div>
-    <div id="one" class="ui-body-d ui-content" style="padding:0;display: block;width: 100%;">
-        <div style="padding:0 0 0 15px;display: block;width: 55%;float: left;line-height: 60px;color: #777777;">
-            可参与<font id="grabNum"></font>场会议的抢单
+        <div id="one" class="ui-body-d ui-content" style="padding:0;display: block;width: 100%;">
+            <div style="padding:0 0 0 15px;display: block;width: 55%;float: left;line-height: 60px;color: #777777;">
+                可参与<font id="grabNum"></font>场会议的抢单
+
+            </div>
+            <div style="width: calc(45% - 15px);float: right;">
+                <select id="selectStatus"  onchange="showAllGrabs(this.value)">
+
+                </select>
+            </div>
+
+            <div id="grabDiv" style="width: 100%;float: left;">
+
+            </div>
+        </div>
+
+
+        <form name="formMeetingGrabAdd" action="meetingGrab/addPage"  th:action="@{/meetingGrab/addPage}" method="get">
+            <input type="hidden" th:value="${uid}" name="uid" id="uid"></input>
+            <input type="hidden" name="pid" id="pid" value=""></input>
+        </form>
+
+
+
+
+        <div id="two" class="ui-body-d ui-content" style="padding: 0;display: none;width: 100%;">
 
         </div>
-        <div style="width: calc(45% - 15px);float: right;">
-            <select id="selectStatus"  onchange="showAllGrabs(this.value)">
-
-            </select>
-        </div>
-        <input type="hidden" th:value="${uid}" name="uid" id="uid"></input>
-        <div id="grabDiv" style="width: 100%;float: left;">
-
-        </div>
-    </div>
-
-
-
-
-
-    <div id="two" class="ui-body-d ui-content" style="padding: 0;display: none;width: 100%;">
-
     </div>
 </body>
 
