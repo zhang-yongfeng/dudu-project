@@ -32,4 +32,9 @@ public class MeetingGrab implements Serializable {
      */
     private Short status;
 
+    /**
+     * 抢单人 关联  用户信息
+     */
+    private User user;
+
 }
